@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Если у вас нет денег что-бы оплатить мою работу я могу работать за еду</h1>
+<h2>Поэтому сегодня я раскажу что я люблю кушать:</h2>
+<ul class="img">
+        {% for f in food %}
+                <li>{{food[f][0]}}<br>
+                Пояснение: {{food[f][1]}}</li><img src="{{food[f][2]}}" width="200px" height="200px">
+        {% endfor %}
+</ul>
+{% endblock %}

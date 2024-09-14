@@ -1,0 +1,7 @@
+# Telebot
+API_ID = 20386903
+API_HASH = '7d182eace801c523842b05adaf380fa9'
+BOT_TOKEN = '6992179085:AAFLg8vowEaW-Sy0TUTuRjeG5Q2cS9mrolM'
+
+# Open Weather Map
+OWM_KEY = '824e44a012cc4edfe3f5fc4f9cd0d3eb'

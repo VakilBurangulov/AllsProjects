@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Привет если ты хочешь со мной связаться то можешь использовать один из моих рабочих контактов</h1>
+<div class="contact">
+    {% for con in contact %}
+
+        <p class="contact_p"><strong>{{con.title}}:</strong> {{con.info}}</p>
+
+    {% endfor %}
+</div>
+{% endblock %}

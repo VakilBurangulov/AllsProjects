@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <h1>Привет, меня зовут {{name}}, но мой псевдоним {{nickname}} Wielka Rzeczpospolita</h1>
+    <p>Сегодня я раскажу что я люблю кушать:</p>
+    <ul class="good">
+        {% for f in food %}
+                <li>{{food[f][0]}}<br>
+                Пояснение: {{food[f][1]}}</li><img src="{{food[f][2]}}" width="200px" height="200px">
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Привет меня зовут Вакиль и я продаю свои услуги разработчика на Python</h1>
+<p>Я могу сделать :</p>
+<ul class="img">
+    {% for cap in capabilitie %}
+    <div class="capabilities">
+        <li>{{cap.title}}</li>
+        <img src="{{cap.image}}" width="100px" height="100px">
+    </div>
+    {% endfor %}
+</ul>
+{% endblock %}

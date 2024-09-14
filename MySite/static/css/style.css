@@ -1,0 +1,37 @@
+body {
+background-image: url(../image/top-back.jpg);
+size:full-screen;
+}
+.nav {
+float: right;
+}
+.contact {
+display: flex;
+color: green;
+text-align: down;
+}
+.contact_p {
+padding-left: 30px;
+}
+.capabilities {
+display: flex;
+}
+.nav-obj {
+margin-right: 5px;
+margin-left: 5px;
+color: inherit;
+text-decoration: inherit;
+}
+.nav-obj-act {
+margin-right: 5px;
+margin-left: 5px;
+color: red;
+text-decoration: inherit;
+}
+.href {
+color: purple;
+ text-decoration: inherit;
+}
+.img {
+    list-style-image:url(../image/good.gif);
+}
