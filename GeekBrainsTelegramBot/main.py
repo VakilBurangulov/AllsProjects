@@ -4,14 +4,14 @@ import operator
 
 # import downloaded packages
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, CallbackQuery
 
 # import my local files
 import config  # secret file
 import buttons
 import keyboards
-from custom_filters import button_filter
-from weather import get_current_weather
+from custom_filters import button_filter, inline_button_filter
+from weather import get_current_weather, get_forecast
 
 bot = Client(
     api_id=config.API_ID,
@@ -63,7 +63,6 @@ async def back_command(client: Client, message: Message):
 
 @bot.on_message(filters=filters.command("help") | button_filter(buttons.help_button))
 async def help_command(client: Client, message: Message):
-    print('help')
     await message.reply(f"""Привет вот список существующих команд
     \n /start-Запускает бота\n /time - Показывает время в онлайн\n /calc - Калькулятор\n /weather - Показывает погоду в твоём городе""", reply_markup=keyboards.main_keyboard)
 
@@ -71,7 +70,25 @@ async def help_command(client: Client, message: Message):
 @bot.on_message(filters=filters.command("weather") | button_filter(buttons.weather_button))
 async def weather_command(client: Client, message: Message):
     city = 'Домодедово'
-    await message.reply(get_current_weather(city))
+    await message.reply(get_current_weather(city), reply_markup=keyboards.weather_inline_keyboard)
+
+
+@bot.on_callback_query(filters=inline_button_filter(buttons.weather_current_inline_button))
+async def weather_current_callback(client: Client, query: CallbackQuery):
+    city = 'Домодедово'
+    weather = get_current_weather(city)
+    if weather == query.message.text:
+        return
+    await query.message.edit_text(weather, reply_markup=keyboards.weather_inline_keyboard)
+
+
+@bot.on_callback_query(filters=inline_button_filter(buttons.weather_forecast_inline_button))
+async def weather_forecast_callback(client: Client, query: CallbackQuery):
+    city = 'Домодедово'
+    weather = get_forecast(city)
+    if weather == query.message.text:
+        return
+    await query.message.edit_text(weather, reply_markup=keyboards.weather_inline_keyboard)
 
 
 @bot.on_message()

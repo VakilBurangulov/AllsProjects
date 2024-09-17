@@ -1,4 +1,4 @@
-from pyrogram.types import ReplyKeyboardMarkup
+from pyrogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
 
 import buttons
 
@@ -15,4 +15,11 @@ settings_keyboard = ReplyKeyboardMarkup(
         [buttons.back_button],
     ],
     resize_keyboard=True
+)
+
+weather_inline_keyboard = InlineKeyboardMarkup(
+    [
+        [buttons.weather_current_inline_button],
+        [buttons.weather_forecast_inline_button]
+    ]
 )
