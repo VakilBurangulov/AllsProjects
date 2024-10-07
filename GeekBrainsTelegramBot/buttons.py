@@ -9,6 +9,7 @@ weather_button = KeyboardButton(f'{emoji.SUN} Погода')
 
 # buttons for settings_keyboard
 back_button = KeyboardButton(f'{emoji.BACK_ARROW} Назад')
+change_city_button = KeyboardButton(f'{emoji.CITYSCAPE} Сменить город')
 
 # buttons for inline_keyboard
 weather_current_inline_button = InlineKeyboardButton(f'{emoji.FIVE_O_CLOCK} Погода сейчас', 'weather_current')

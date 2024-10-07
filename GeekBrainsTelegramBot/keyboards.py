@@ -1,5 +1,7 @@
+# import downloaded packages
 from pyrogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup
 
+# import my local files
 import buttons
 
 main_keyboard = ReplyKeyboardMarkup(
@@ -12,7 +14,7 @@ main_keyboard = ReplyKeyboardMarkup(
 
 settings_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [buttons.back_button],
+        [buttons.change_city_button, buttons.back_button]
     ],
     resize_keyboard=True
 )
