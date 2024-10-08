@@ -11,8 +11,10 @@ angry_button = KeyboardButton(f'{emoji.ENRAGED_FACE} Злость')
 # buttons for cat_keyboard
 cat_button = KeyboardButton(f'{emoji.CAT_FACE} Рандомный котик')
 
+
 # buttons for settings_keyboard
 cats_button = KeyboardButton(f'{emoji.CAT} Коты')
 ascii_button = KeyboardButton(f'{emoji.SMILING_FACE} ASCII')
+help_button = KeyboardButton(f'{emoji.LINK} Помощь')
 back_button = KeyboardButton(f'{emoji.BACK_ARROW} Назад')
 

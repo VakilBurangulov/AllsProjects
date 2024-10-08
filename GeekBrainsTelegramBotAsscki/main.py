@@ -5,6 +5,7 @@ import random
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery, ForceReply
 import requests
+from requests import Response
 
 # import my local files
 import config  # secret file
@@ -35,6 +36,19 @@ bot = Client(
 @bot.on_message(filters=filters.command("start"))
 async def start_command(bot: Client, message: Message):
     await message.reply(f"Привет {message.from_user.first_name}, я Бот который знает много прикольных ASCII-эмоций", reply_markup=keyboards.settings_keyboard)
+
+
+@bot.on_message(filters=filters.command("help") | custom_filters.button_filter(buttons.help_button))
+async def help_command(bot: Client, message: Message):
+    await message.reply("""start - Приветствие рассказ о функциях бота
+sad - Отправка рандомного грустного ASCII-эмоджи
+angry - Отправка рандомного злого ASCII-эмоджи
+happy - Отправка рандомного веселого ASCII-эмоджи
+hello - Отправка рандомного приветствующего ASCII-эмоджи
+translate_en_ru - Перевод с английского на русский
+translate_ru_en - Перевод с русского на английский
+cat - Отправляет рандомную фотку кота
+help - Помощь""", reply_markup=keyboards.settings_keyboard)
 
 
 @bot.on_message(filters=custom_filters.button_filter(buttons.cats_button))
@@ -96,6 +110,47 @@ def get_random_cat():
     return cat_url
 
 
+def get_translation(text:str, source_lang:str, target_lang: str) -> str | None:
+    try_count = 0
+    success = False
+
+    def try_get_translation(text, source_lang, target_lang):
+        url = "https://translate.redko.us/translate"
+        params = {
+            "text": text,
+            "source_lang": source_lang,
+            "target_lang": target_lang
+        }
+        return requests.get(url, params=params)
+
+    while not success and try_count < 5:
+        responce = try_get_translation(text, source_lang, target_lang)
+        success = responce.status_code == 200
+        try_count += 1
+
+        if success:
+            return responce.json()['response']['translated_text']
+
+
+@bot.on_message(filters=filters.command("translate_en_ru"))
+async def translate_en_ru_command(bot: Client, message: Message):
+    if len(message.text.split()) == 2:
+        text = message.text.split()[1]
+        await message.reply(get_translation(text, 'en', 'ru'))
+    else:
+        await message.reply("Команду нужно вводить вот так /translate_en_ru слово \nПример /translate_en_ru Car")
+
+
+@bot.on_message(filters=filters.command("translate_ru_en"))
+async def translate_ru_en_command(bot: Client, message: Message):
+    if len(message.text.split()) == 2:
+        text = message.text.split()[1]
+        await message.reply(get_translation(text, 'ru', 'en'))
+
+    else:
+        await message.reply("Команду нужно вводить вот так /translate_ru_en слово \nПример /translate_ru_en Машина")
+
+
 @bot.on_message(filters=filters.command("cat") | custom_filters.button_filter(buttons.cat_button))
 async def cat_command(bot: Client, message:Message):
     await message.reply(get_random_cat())
@@ -123,8 +178,10 @@ async def echo(bot: Client, message: Message):
         await message.reply(f'Хм кажется у меня есть идея')
         bot.database.set_amount(message.from_user.id, res.amount+1)
     elif res.amount > 6:
-        if message.text.lower() == "я дурак":
-            await message.reply("Ты дурак")
+        text = message.text.lower()
+        if len(text.split()) == 2 and text.startswith("я"):
+            text_split = text.split()
+            await message.reply(f"Ты {text_split[1]}")
             bot.database.set_amount(message.from_user.id, res.amount + 1)
         else:
             await message.reply(message.text)
