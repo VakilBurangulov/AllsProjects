@@ -3,9 +3,8 @@ import random
 
 # import downloaded packages
 from pyrogram import Client, filters
-from pyrogram.types import Message, CallbackQuery, ForceReply
+from pyrogram.types import Message
 import requests
-from requests import Response
 
 # import my local files
 import config  # secret file
@@ -110,7 +109,7 @@ def get_random_cat():
     return cat_url
 
 
-def get_translation(text:str, source_lang:str, target_lang: str) -> str | None:
+def get_translation(text: str, source_lang: str, target_lang: str) -> str | None:
     try_count = 0
     success = False
 
@@ -152,7 +151,7 @@ async def translate_ru_en_command(bot: Client, message: Message):
 
 
 @bot.on_message(filters=filters.command("cat") | custom_filters.button_filter(buttons.cat_button))
-async def cat_command(bot: Client, message:Message):
+async def cat_command(bot: Client, message: Message):
     await message.reply(get_random_cat())
 
 
@@ -160,13 +159,13 @@ async def cat_command(bot: Client, message:Message):
 async def echo(bot: Client, message: Message):
     res = bot.database.get_user(message.from_user.id)
     if res is None:
-        await message.reply(f'Привет {message.from_user.first_name}, я не знаю этой команды')
+        await message.reply(f'Привет {message.from_user.first_name}, я не знаю этой команды, используй /help')
         bot.database.create_user(message.from_user.id)
     elif res.amount == 0:
-        await message.reply(f'Привет {message.from_user.first_name}, я не знаю этой команды')
+        await message.reply(f'Привет {message.from_user.first_name}, я не знаю этой команды, используй /help')
         bot.database.set_amount(message.from_user.id, res.amount+1)
     elif res.amount == 1:
-        await message.reply(f'Привет {message.from_user.first_name}, я же сказал что не знаю этой команды')
+        await message.reply(f'Привет {message.from_user.first_name}, я не знаю этой команды, я же попросил использовать команду /help')
         bot.database.set_amount(message.from_user.id, res.amount+1)
     elif res.amount == 2:
         await message.reply(f'Меня это реально начинает бесить')
@@ -183,6 +182,9 @@ async def echo(bot: Client, message: Message):
             text_split = text.split()
             await message.reply(f"Ты {text_split[1]}")
             bot.database.set_amount(message.from_user.id, res.amount + 1)
+        elif text == "прости":
+            await message.reply(f"Ладно я прощаю тебя {message.from_user.first_name}, но больше так не делай, а то я обижусь снова")
+            bot.database.set_amount(message.from_user.id, 0)
         else:
             await message.reply(message.text)
             bot.database.set_amount(message.from_user.id, res.amount+1)
