@@ -138,7 +138,7 @@ async def translate_en_ru_command(bot: Client, message: Message):
         text = message.text.split()[1]
         await message.reply(get_translation(text, 'en', 'ru'))
     else:
-        await message.reply("Команду нужно вводить вот так /translate_en_ru слово \nПример /translate_en_ru Car")
+        await message.reply("Команду нужно вводить вот так /translate_en_ru слово \nПример: /translate_en_ru Car")
 
 
 @bot.on_message(filters=filters.command("translate_ru_en"))
@@ -148,7 +148,7 @@ async def translate_ru_en_command(bot: Client, message: Message):
         await message.reply(get_translation(text, 'ru', 'en'))
 
     else:
-        await message.reply("Команду нужно вводить вот так /translate_ru_en слово \nПример /translate_ru_en Машина")
+        await message.reply("Команду нужно вводить вот так /translate_ru_en слово \nПример: /translate_ru_en Машина")
 
 
 @bot.on_message(filters=filters.command("cat") | custom_filters.button_filter(buttons.cat_button))

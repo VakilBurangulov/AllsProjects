@@ -20,7 +20,6 @@ ascii_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-
 settings_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [buttons.ascii_button, buttons.cats_button],

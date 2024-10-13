@@ -1,4 +1,4 @@
-from pyrogram.types import KeyboardButton
+from pyrogram.types import KeyboardButton, InlineKeyboardButton
 from pyrogram import emoji
 
 # buttons for ascii_keyboard
