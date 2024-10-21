@@ -1,12 +1,16 @@
+import datetime
 import random
+
+
 import pygame as pg
 import pygame_menu
 
 pg.init()
 W, H = 1000, 1000
 display = pg.display.set_mode((W, H))
-X, Y = 8, 8
+X, Y = 10, 10
 count = 0
+time = None
 maze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -73,33 +77,42 @@ class Player(Sprite):
         self.image_left = pg.transform.flip(self.image, True, False)
         self.image_top = pg.image.load('img/pacman_top.png')
         self.image_bottom = pg.transform.flip(self.image_top, False, True)
+        self.speedx = 0
+        self.speedy = 0
 
     def update(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
             if self.rect.centerx > 0:
-                self.rect.x -= 5
+                self.speedx = -3
+                self.speedy = 0
                 self.image = self.image_left
             else:
                 self.rect.centerx = 10
-        if keys[pg.K_d]:
+        elif keys[pg.K_d]:
             if self.rect.centerx < W:
-                self.rect.x += 5
+                self.speedx = 3
+                self.speedy = 0
                 self.image = self.image_right
             else:
                 self.rect.centerx = W-10
-        if keys[pg.K_w]:
+        elif keys[pg.K_w]:
             if self.rect.centery > 0:
-                self.rect.y -= 5
+                self.speedy = -3
+                self.speedx = 0
                 self.image = self.image_top
             else:
                 self.rect.centery = 10
-        if keys[pg.K_s]:
+        elif keys[pg.K_s]:
             if self.rect.centery < H:
-                self.rect.y += 5
+                self.speedy = 3
+                self.speedx = 0
                 self.image = self.image_bottom
             else:
                 self.rect.centery = H-10
+
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
 
     def draw(self):
         display.blit(self.image, self.rect)
@@ -127,13 +140,13 @@ def add_walls(walls):
 
 def collided_walls(pacman: Player):
     if pacman.image == pacman.image_left:
-        pacman.rect.centerx += 5
+        pacman.speedx = 0
     elif pacman.image == pacman.image_right:
-        pacman.rect.centerx -= 5
+        pacman.speedx = 0
     elif pacman.image == pacman.image_top:
-        pacman.rect.centery += 5
+        pacman.speedy = 0
     elif pacman.image == pacman.image_bottom:
-        pacman.rect.centery -= 5
+        pacman.speedy = 0
 
 
 def main():
