@@ -1,6 +1,4 @@
-import datetime
 import random
-
 
 import pygame as pg
 import pygame_menu
@@ -10,25 +8,32 @@ W, H = 1000, 1000
 display = pg.display.set_mode((W, H))
 X, Y = 10, 10
 count = 0
-time = None
-maze = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-# maze = []
-# for y in range(Y):
-#     maze.append([])
-#     for x in range(X):
-#         r = random.randint(0, 1)
-#         maze[y].append(r)
+maze_1 = []
+ghosts = []
+def maze():
+    global  maze_1
+    maze_1 = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
+
+def maze_random():
+    maze_r = []
+    for y in range(Y):
+        maze_r.append([])
+        for x in range(X):
+            r = random.randint(0, 1)
+            maze_r[y].append(r)
+    return maze_r
 
 
 class Sprite(pg.sprite.Sprite):
@@ -69,6 +74,35 @@ class Fruit(pg.sprite.Sprite):
             return
 
 
+class Ghosts(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pg.Surface((10, 10))
+        self.image.fill('white')
+        self.rect = self.image.get_rect(center=(x, y))
+        self.dead = False
+        self.vector = random.randint(0, 1)
+        self.mov = random.randint(0, 1)
+
+    def update(self):
+        if self.vector == 0:
+            if self.mov == 0:
+                self.rect.x -= 3
+            else:
+                self.rect.x += 3
+        else:
+            if self.mov == 0:
+                self.rect.y -= 3
+            else:
+                self.rect.y += 3
+
+    def draw(self):
+        if not self.dead:
+            display.blit(self.image, self.rect)
+        else:
+            return
+
+
 class Player(Sprite):
     def __init__(self):
         super().__init__(150, 150, 'img/pacman.png')
@@ -81,38 +115,41 @@ class Player(Sprite):
         self.speedy = 0
 
     def update(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_a]:
-            if self.rect.centerx > 0:
-                self.speedx = -3
-                self.speedy = 0
-                self.image = self.image_left
-            else:
-                self.rect.centerx = 10
-        elif keys[pg.K_d]:
-            if self.rect.centerx < W:
-                self.speedx = 3
-                self.speedy = 0
-                self.image = self.image_right
-            else:
-                self.rect.centerx = W-10
-        elif keys[pg.K_w]:
-            if self.rect.centery > 0:
-                self.speedy = -3
-                self.speedx = 0
-                self.image = self.image_top
-            else:
-                self.rect.centery = 10
-        elif keys[pg.K_s]:
-            if self.rect.centery < H:
-                self.speedy = 3
-                self.speedx = 0
-                self.image = self.image_bottom
-            else:
-                self.rect.centery = H-10
+        if not self.dead:
+            keys = pg.key.get_pressed()
+            if keys[pg.K_a]:
+                if self.rect.centerx > 0:
+                    self.speedx = -3
+                    self.speedy = 0
+                    self.image = self.image_left
+                else:
+                    self.rect.centerx = 10
+            elif keys[pg.K_d]:
+                if self.rect.centerx < W:
+                    self.speedx = 3
+                    self.speedy = 0
+                    self.image = self.image_right
+                else:
+                    self.rect.centerx = W-10
+            elif keys[pg.K_w]:
+                if self.rect.centery > 0:
+                    self.speedy = -3
+                    self.speedx = 0
+                    self.image = self.image_top
+                else:
+                    self.rect.centery = 10
+            elif keys[pg.K_s]:
+                if self.rect.centery < H:
+                    self.speedy = 3
+                    self.speedx = 0
+                    self.image = self.image_bottom
+                else:
+                    self.rect.centery = H-10
 
-        self.rect.x += self.speedx
-        self.rect.y += self.speedy
+            self.rect.x += self.speedx
+            self.rect.y += self.speedy
+        else:
+            show_end_screen()
 
     def draw(self):
         display.blit(self.image, self.rect)
@@ -121,17 +158,38 @@ class Player(Sprite):
 def add_fruits(fruits):
     for y in range(10):
         for x in range(10):
-            if maze[y][x] == 0:
+            if maze_1[y][x] == 0:
                 fruit_x = ((x+1)*100) - 50
                 fruit_y = ((y + 1) * 100) - 50
                 fruit = Fruit(fruit_x, fruit_y)
                 fruits.add(fruit)
 
 
+def add_ghosts():
+    global ghosts
+    count = 0
+    rects = []
+    while count < 5:
+            x = random.randint(0, 9)
+            y = random.randint(0, 9)
+            if maze_1[y][x] == 0:
+                count += 1
+                maze_1[y][x] = 2
+                ghost_x = ((x+1) * 100) - 50
+                ghost_y = ((y+1) * 100) - 50
+                rects.append([ghost_x, ghost_y])
+    ghost1 = Ghosts(rects[0][0], rects[0][1])
+    ghost2 = Ghosts(rects[1][0], rects[1][1])
+    ghost3 = Ghosts(rects[2][0], rects[2][1])
+    ghost4 = Ghosts(rects[3][0], rects[3][1])
+    ghost5 = Ghosts(rects[4][0], rects[4][1])
+    ghosts.append((ghost1, ghost2, ghost3, ghost4, ghost5))
+
+
 def add_walls(walls):
     for y in range(10):
         for x in range(10):
-            if maze[y][x] == 1:
+            if maze_1[y][x] == 1:
                 wall_x = (x+1)*100
                 wall_y = (y+1)*100
                 wall = Wall(wall_x, wall_y)
@@ -141,30 +199,51 @@ def add_walls(walls):
 def collided_walls(pacman: Player):
     if pacman.image == pacman.image_left:
         pacman.speedx = 0
+        pacman.rect.centerx += 10
     elif pacman.image == pacman.image_right:
         pacman.speedx = 0
+        pacman.rect.centerx -= 10
     elif pacman.image == pacman.image_top:
         pacman.speedy = 0
+        pacman.rect.centery += 10
     elif pacman.image == pacman.image_bottom:
         pacman.speedy = 0
+        pacman.rect.centery -= 10
+
+
+def remove_ghosts(ghost: Ghosts):
+    if ghost.mov == 0:
+        ghost.mov = 1
+    else:
+        ghost.mov = 0
 
 
 def main():
+    maze()
     pacman = Player()
     walls = pg.sprite.Group()
     fruits = pg.sprite.Group()
+    add_ghosts()
     add_fruits(fruits)
     add_walls(walls)
     global count
+    global ghosts
     count = 0
     while True:
         for e in pg.event.get():
             if e.type == pg.QUIT:
                 return
-
         pacman.update()
+        for ghost in ghosts[0]:
+            ghost.update()
         walls.update()
         fruits.update()
+        for ghost in ghosts[0]:
+            if pacman.rect.colliderect(ghost.rect):
+                pacman.kill()
+        for ghost in ghosts[0]:
+            if pg.sprite.spritecollide(ghost, walls, False):
+                remove_ghosts(ghost)
         if pg.sprite.spritecollide(pacman, walls, False):
             collided_walls(pacman)
         if pg.sprite.spritecollide(pacman, fruits, True):
@@ -174,6 +253,8 @@ def main():
             return
         display.fill('black')
         pacman.draw()
+        for ghost in ghosts[0]:
+            ghost.draw()
         fruits.draw(display)
         walls.draw(display)
         pg.display.update()
@@ -181,7 +262,7 @@ def main():
 
 
 def show_end_screen():
-    end_menu = pygame_menu.Menu('Игра окончена', 300, 400, theme=pygame_menu.themes.THEME_BLUE)
+    end_menu = pygame_menu.Menu('Игра окончена', 300, 400, theme=pygame_menu.themes.THEME_DARK)
     end_menu.add.label(f'Всего очков: {count}', font_size=30)
     end_menu.add.button('Заново', main)
     end_menu.add.button('Выйти', pygame_menu.events.EXIT)
@@ -189,7 +270,7 @@ def show_end_screen():
 
 
 def show_start_screen():
-    menu = pygame_menu.Menu('Pac-Man', 300, 400, theme=pygame_menu.themes.THEME_BLUE)
+    menu = pygame_menu.Menu('Pac-Man', 300, 400, theme=pygame_menu.themes.THEME_DARK)
     menu.add.button('Начать', main)
     menu.add.button('Выйти', pygame_menu.events.EXIT)
     menu.mainloop(display)
