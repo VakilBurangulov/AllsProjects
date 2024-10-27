@@ -10,18 +10,20 @@ X, Y = 10, 10
 count = 0
 maze_1 = []
 ghosts = []
+
+
 def maze():
-    global  maze_1
+    global maze_1
     maze_1 = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
         [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 3, 1],
         [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 3, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]
 
@@ -105,7 +107,15 @@ class Ghosts(pg.sprite.Sprite):
 
 class Player(Sprite):
     def __init__(self):
-        super().__init__(150, 150, 'img/pacman.png')
+        start_point = random.randint(0, 2)
+        rects = []
+        for y in range(10):
+            for x in range(10):
+                if maze_1[y][x] == 3:
+                    pacman_y = ((y+1) * 100) - 50
+                    pacman_x = ((x + 1) * 100) - 50
+                    rects.append([pacman_x, pacman_y])
+        super().__init__(rects[start_point][0], rects[start_point][1], 'img/pacman.png')
         self.image_ = self.image
         self.image_right = self.image
         self.image_left = pg.transform.flip(self.image, True, False)
@@ -183,6 +193,7 @@ def add_ghosts():
     ghost3 = Ghosts(rects[2][0], rects[2][1])
     ghost4 = Ghosts(rects[3][0], rects[3][1])
     ghost5 = Ghosts(rects[4][0], rects[4][1])
+    ghosts.clear()
     ghosts.append((ghost1, ghost2, ghost3, ghost4, ghost5))
 
 
