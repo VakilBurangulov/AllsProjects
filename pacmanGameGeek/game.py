@@ -20,10 +20,10 @@ def maze():
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
         [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-        [1, 0, 0, 0, 1, 1, 0, 0, 3, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
         [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
-        [1, 0, 3, 0, 0, 0, 0, 0, 0, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]
 
@@ -77,10 +77,10 @@ class Fruit(pg.sprite.Sprite):
 
 
 class Ghosts(pg.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int, color: str):
         super().__init__()
         self.image = pg.Surface((10, 10))
-        self.image.fill('white')
+        self.image.fill(color)
         self.rect = self.image.get_rect(center=(x, y))
         self.dead = False
         self.vector = random.randint(0, 1)
@@ -179,6 +179,7 @@ def add_ghosts():
     global ghosts
     count = 0
     rects = []
+    colors = ['green', 'yellow', 'blue', 'orange', 'purple']
     while count < 5:
             x = random.randint(0, 9)
             y = random.randint(0, 9)
@@ -188,11 +189,11 @@ def add_ghosts():
                 ghost_x = ((x+1) * 100) - 50
                 ghost_y = ((y+1) * 100) - 50
                 rects.append([ghost_x, ghost_y])
-    ghost1 = Ghosts(rects[0][0], rects[0][1])
-    ghost2 = Ghosts(rects[1][0], rects[1][1])
-    ghost3 = Ghosts(rects[2][0], rects[2][1])
-    ghost4 = Ghosts(rects[3][0], rects[3][1])
-    ghost5 = Ghosts(rects[4][0], rects[4][1])
+    ghost1 = Ghosts(rects[0][0], rects[0][1], colors[0])
+    ghost2 = Ghosts(rects[1][0], rects[1][1], colors[1])
+    ghost3 = Ghosts(rects[2][0], rects[2][1], colors[2])
+    ghost4 = Ghosts(rects[3][0], rects[3][1], colors[3])
+    ghost5 = Ghosts(rects[4][0], rects[4][1], colors[4])
     ghosts.clear()
     ghosts.append((ghost1, ghost2, ghost3, ghost4, ghost5))
 
