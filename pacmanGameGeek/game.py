@@ -6,6 +6,8 @@ import pygame_menu
 pg.init()
 W, H = 1000, 1000
 display = pg.display.set_mode((W, H))
+pg.display.set_icon(pg.image.load('img/scooby.jpg'))
+pg.display.set_caption('Scooby')
 X, Y = 10, 10
 count = 0
 maze_1 = []
@@ -53,8 +55,7 @@ class Sprite(pg.sprite.Sprite):
 class Wall(pg.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pg.Surface((100, 100))
-        self.image.fill('white')
+        self.image = pg.image.load('img/wall.jpg')
         self.rect = self.image.get_rect(bottomright=(x, y))
 
     def draw(self):
@@ -64,8 +65,7 @@ class Wall(pg.sprite.Sprite):
 class Fruit(pg.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pg.Surface((10, 10))
-        self.image.fill('red')
+        self.image = pg.image.load('img/food.png')
         self.rect = self.image.get_rect(center=(x, y))
         self.dead = False
 
@@ -76,12 +76,9 @@ class Fruit(pg.sprite.Sprite):
             return
 
 
-class Ghosts(pg.sprite.Sprite):
-    def __init__(self, x: int, y: int, color: str):
-        super().__init__()
-        self.image = pg.Surface((10, 10))
-        self.image.fill(color)
-        self.rect = self.image.get_rect(center=(x, y))
+class Ghost(Sprite):
+    def __init__(self, x, y):
+        super().__init__(x, y, 'img/ghost.jpg')
         self.dead = False
         self.vector = random.randint(0, 1)
         self.mov = random.randint(0, 1)
@@ -115,12 +112,10 @@ class Player(Sprite):
                     pacman_y = ((y+1) * 100) - 50
                     pacman_x = ((x + 1) * 100) - 50
                     rects.append([pacman_x, pacman_y])
-        super().__init__(rects[start_point][0], rects[start_point][1], 'img/pacman.png')
+        super().__init__(rects[start_point][0], rects[start_point][1], 'img/scooby.jpg')
         self.image_ = self.image
-        self.image_right = self.image
         self.image_left = pg.transform.flip(self.image, True, False)
-        self.image_top = pg.image.load('img/pacman_top.png')
-        self.image_bottom = pg.transform.flip(self.image_top, False, True)
+        self.vector = ''
         self.speedx = 0
         self.speedy = 0
 
@@ -131,6 +126,7 @@ class Player(Sprite):
                 if self.rect.centerx > 0:
                     self.speedx = -3
                     self.speedy = 0
+                    self.vector = 'left'
                     self.image = self.image_left
                 else:
                     self.rect.centerx = 10
@@ -138,21 +134,22 @@ class Player(Sprite):
                 if self.rect.centerx < W:
                     self.speedx = 3
                     self.speedy = 0
-                    self.image = self.image_right
+                    self.vector = 'right'
+                    self.image = self.image_
                 else:
                     self.rect.centerx = W-10
             elif keys[pg.K_w]:
                 if self.rect.centery > 0:
                     self.speedy = -3
                     self.speedx = 0
-                    self.image = self.image_top
+                    self.vector = 'bottom'
                 else:
                     self.rect.centery = 10
             elif keys[pg.K_s]:
                 if self.rect.centery < H:
                     self.speedy = 3
                     self.speedx = 0
-                    self.image = self.image_bottom
+                    self.vector = 'top'
                 else:
                     self.rect.centery = H-10
 
@@ -179,7 +176,6 @@ def add_ghosts():
     global ghosts
     count = 0
     rects = []
-    colors = ['green', 'yellow', 'blue', 'orange', 'purple']
     while count < 5:
             x = random.randint(0, 9)
             y = random.randint(0, 9)
@@ -189,11 +185,11 @@ def add_ghosts():
                 ghost_x = ((x+1) * 100) - 50
                 ghost_y = ((y+1) * 100) - 50
                 rects.append([ghost_x, ghost_y])
-    ghost1 = Ghosts(rects[0][0], rects[0][1], colors[0])
-    ghost2 = Ghosts(rects[1][0], rects[1][1], colors[1])
-    ghost3 = Ghosts(rects[2][0], rects[2][1], colors[2])
-    ghost4 = Ghosts(rects[3][0], rects[3][1], colors[3])
-    ghost5 = Ghosts(rects[4][0], rects[4][1], colors[4])
+    ghost1 = Ghost(rects[0][0], rects[0][1])
+    ghost2 = Ghost(rects[1][0], rects[1][1])
+    ghost3 = Ghost(rects[2][0], rects[2][1])
+    ghost4 = Ghost(rects[3][0], rects[3][1])
+    ghost5 = Ghost(rects[4][0], rects[4][1])
     ghosts.clear()
     ghosts.append((ghost1, ghost2, ghost3, ghost4, ghost5))
 
@@ -209,21 +205,21 @@ def add_walls(walls):
 
 
 def collided_walls(pacman: Player):
-    if pacman.image == pacman.image_left:
+    if pacman.vector == 'left':
         pacman.speedx = 0
         pacman.rect.centerx += 10
-    elif pacman.image == pacman.image_right:
+    elif pacman.vector == 'right':
         pacman.speedx = 0
         pacman.rect.centerx -= 10
-    elif pacman.image == pacman.image_top:
+    elif pacman.vector == 'bottom':
         pacman.speedy = 0
         pacman.rect.centery += 10
-    elif pacman.image == pacman.image_bottom:
+    elif pacman.vector == 'top':
         pacman.speedy = 0
         pacman.rect.centery -= 10
 
 
-def remove_ghosts(ghost: Ghosts):
+def remove_ghosts(ghost: Ghost):
     if ghost.mov == 0:
         ghost.mov = 1
     else:
@@ -274,7 +270,7 @@ def main():
 
 
 def show_end_screen():
-    end_menu = pygame_menu.Menu('Игра окончена', 300, 400, theme=pygame_menu.themes.THEME_DARK)
+    end_menu = pygame_menu.Menu('Scooby', 300, 400, theme=pygame_menu.themes.THEME_DARK)
     end_menu.add.label(f'Всего очков: {count}', font_size=30)
     end_menu.add.button('Заново', main)
     end_menu.add.button('Выйти', pygame_menu.events.EXIT)
@@ -282,7 +278,7 @@ def show_end_screen():
 
 
 def show_start_screen():
-    menu = pygame_menu.Menu('Pac-Man', 300, 400, theme=pygame_menu.themes.THEME_DARK)
+    menu = pygame_menu.Menu('Scooby', 300, 400, theme=pygame_menu.themes.THEME_DARK)
     menu.add.button('Начать', main)
     menu.add.button('Выйти', pygame_menu.events.EXIT)
     menu.mainloop(display)
