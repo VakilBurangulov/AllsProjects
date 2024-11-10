@@ -10,13 +10,65 @@ pg.display.set_icon(pg.image.load('img/scooby.jpg'))
 pg.display.set_caption('Scooby')
 X, Y = 10, 10
 count = 0
-maze_1 = []
+maze = []
 ghosts = []
+now_maze = None
+all_count = 0
 
 
-def maze():
-    global maze_1
-    maze_1 = [
+maze_1 = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
+maze_2 = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
+maze_3 = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
+maze_4 = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+        [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
+maze_5 = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
@@ -30,14 +82,9 @@ def maze():
     ]
 
 
-def maze_random():
-    maze_r = []
-    for y in range(Y):
-        maze_r.append([])
-        for x in range(X):
-            r = random.randint(0, 1)
-            maze_r[y].append(r)
-    return maze_r
+def maze_upload(x):
+    global maze
+    maze = x
 
 
 class Sprite(pg.sprite.Sprite):
@@ -108,7 +155,7 @@ class Player(Sprite):
         rects = []
         for y in range(10):
             for x in range(10):
-                if maze_1[y][x] == 3:
+                if maze[y][x] == 3:
                     pacman_y = ((y+1) * 100) - 50
                     pacman_x = ((x + 1) * 100) - 50
                     rects.append([pacman_x, pacman_y])
@@ -156,16 +203,35 @@ class Player(Sprite):
             self.rect.x += self.speedx
             self.rect.y += self.speedy
         else:
-            show_end_screen()
+            show_bad_end_screen()
 
     def draw(self):
         display.blit(self.image, self.rect)
 
 
+class Portal(Sprite):
+    def __init__(self):
+        start_point = random.randint(0, 2)
+        rects = []
+        for y in range(10):
+            for x in range(10):
+                if maze[y][x] == 3:
+                    pacman_y = ((y + 1) * 100) - 50
+                    pacman_x = ((x + 1) * 100) - 50
+                    rects.append([pacman_x, pacman_y])
+
+        super().__init__(rects[start_point][0], rects[start_point][1], 'img/portal.jpg')
+        self.on = False
+
+    def draw(self):
+        if self.on:
+            display.blit(self.image, self.rect)
+
+
 def add_fruits(fruits):
     for y in range(10):
         for x in range(10):
-            if maze_1[y][x] == 0:
+            if maze[y][x] == 0:
                 fruit_x = ((x+1)*100) - 50
                 fruit_y = ((y + 1) * 100) - 50
                 fruit = Fruit(fruit_x, fruit_y)
@@ -173,15 +239,14 @@ def add_fruits(fruits):
 
 
 def add_ghosts():
-    global ghosts
     count = 0
     rects = []
     while count < 5:
             x = random.randint(0, 9)
             y = random.randint(0, 9)
-            if maze_1[y][x] == 0:
+            if maze[y][x] == 0:
                 count += 1
-                maze_1[y][x] = 2
+                maze[y][x] = 2
                 ghost_x = ((x+1) * 100) - 50
                 ghost_y = ((y+1) * 100) - 50
                 rects.append([ghost_x, ghost_y])
@@ -197,7 +262,7 @@ def add_ghosts():
 def add_walls(walls):
     for y in range(10):
         for x in range(10):
-            if maze_1[y][x] == 1:
+            if maze[y][x] == 1:
                 wall_x = (x+1)*100
                 wall_y = (y+1)*100
                 wall = Wall(wall_x, wall_y)
@@ -226,16 +291,28 @@ def remove_ghosts(ghost: Ghost):
         ghost.mov = 0
 
 
-def main():
-    maze()
+def count_update():
+    global all_count
+    for y in range(10):
+        for x in range(10):
+            if maze[y][x] == 0:
+                all_count += 1
+    print(all_count)
+
+
+def main(x):
+    global now_maze, count, ghosts, all_count
+    now_maze = x
+    all_count = 0
+    maze_upload(x)
     pacman = Player()
+    portal = Portal()
     walls = pg.sprite.Group()
     fruits = pg.sprite.Group()
     add_ghosts()
     add_fruits(fruits)
     add_walls(walls)
-    global count
-    global ghosts
+    count_update()
     count = 0
     while True:
         for e in pg.event.get():
@@ -246,40 +323,58 @@ def main():
             ghost.update()
         walls.update()
         fruits.update()
+        if portal.on:
+            if pacman.rect.colliderect(portal.rect):
+                show_good_end_screen()
+                return
         for ghost in ghosts[0]:
             if pacman.rect.colliderect(ghost.rect):
-                pacman.kill()
+                show_bad_end_screen()
+                return
         for ghost in ghosts[0]:
             if pg.sprite.spritecollide(ghost, walls, False):
                 remove_ghosts(ghost)
         if pg.sprite.spritecollide(pacman, walls, False):
             collided_walls(pacman)
         if pg.sprite.spritecollide(pacman, fruits, True):
-            count += 1
+            count = all_count - len(fruits)
         if len(fruits) == 0:
-            show_end_screen()
-            return
+            portal.on = True
         display.fill('black')
         pacman.draw()
         for ghost in ghosts[0]:
             ghost.draw()
         fruits.draw(display)
         walls.draw(display)
+        portal.draw()
         pg.display.update()
         pg.time.delay(1000 // 60)
 
 
-def show_end_screen():
+def show_bad_end_screen():
     end_menu = pygame_menu.Menu('Scooby', 300, 400, theme=pygame_menu.themes.THEME_DARK)
+    end_menu.add.label(f'Ты проиграл', font_size=30)
     end_menu.add.label(f'Всего очков: {count}', font_size=30)
-    end_menu.add.button('Заново', main)
+    end_menu.add.button('Главное меню', show_start_screen)
+    end_menu.add.button('Заново', main, now_maze)
+    end_menu.add.button('Выйти', pygame_menu.events.EXIT)
+    end_menu.mainloop(display)
+
+
+def show_good_end_screen():
+    end_menu = pygame_menu.Menu('Scooby', 300, 400, theme=pygame_menu.themes.THEME_DARK)
+    end_menu.add.label(f'Ты выиграл', font_size=30)
+    end_menu.add.label(f'Всего очков: {count}', font_size=30)
+    end_menu.add.button('Главное меню', show_start_screen)
+    end_menu.add.button('Заново', main, now_maze)
     end_menu.add.button('Выйти', pygame_menu.events.EXIT)
     end_menu.mainloop(display)
 
 
 def show_start_screen():
     menu = pygame_menu.Menu('Scooby', 300, 400, theme=pygame_menu.themes.THEME_DARK)
-    menu.add.button('Начать', main)
+    menu.add.button('Уровень 1', main, maze_1)
+    menu.add.button('Уровень 2', main, maze_2)
     menu.add.button('Выйти', pygame_menu.events.EXIT)
     menu.mainloop(display)
 
