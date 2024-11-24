@@ -2,6 +2,7 @@ import pygame as pg
 import pygame_menu
 
 import random
+import copy
 
 pg.init()
 
@@ -66,7 +67,7 @@ level_4 = [
 
 def maze_upload(c):
     global maze
-    maze = c
+    maze = copy.deepcopy(c)
 
 
 class Sprite(pg.sprite.Sprite):
@@ -236,7 +237,7 @@ def collide_player_and_wall(player: Player):
 def main(x):
     global all_counts, count, now_maze
     maze_upload(x)
-    now_maze = x
+    now_maze = copy.deepcopy(x)
     count = 0
     player = Player()
     portal = Portal()
