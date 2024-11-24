@@ -64,6 +64,19 @@ level_4 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
+level_5 = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+    [1, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+]
+
 
 def maze_upload(c):
     global maze
@@ -295,6 +308,7 @@ def show_start_screen():
     menu.add.button('Level 2', main, level_2)
     menu.add.button('Level 3', main, level_3)
     menu.add.button('Level 4', main, level_4)
+    menu.add.button('Level 5', main, level_5)
     menu.add.button('Exit', pygame_menu.events.EXIT)
     menu.mainloop(display)
 
